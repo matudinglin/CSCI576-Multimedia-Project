@@ -48,7 +48,8 @@ for i, video_path in enumerate(video_paths):
         frame_old, frame_new = scene[1].get_frames()-1, scene[1].get_frames()
         motion_vector = compute_motion_vector(cap, frame_old, frame_new)
         if motion_vector is not None:
-            split_scenes[video_path.split('/')[-1]].append(motion_vector)
+            split_scenes[video_path.split('/')[-1]].append((motion_vector, frame_old))
+            
 
 # Save the scenes to binary files
 with open('./Data/split_scenes.pkl', 'wb') as f:

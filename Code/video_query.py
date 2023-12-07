@@ -63,9 +63,9 @@ for i in range(1, 12):
     frame_new = query_scene_list[0][1].get_frames()
     cap = cv2.VideoCapture(query_video)
     motion_vector = compute_motion_vector(cap, frame_old, frame_new)
-    for video, scenes in split_scenes.items():
-        for scene in scenes:
-            if motion_vector.shape == scene.shape:
-                diff = motion_vector - scene
+    for video, shots in split_scenes.items():
+        for shot in shots:
+            if motion_vector.shape == shot[0].shape:
+                diff = motion_vector - shot[0]
                 if (diff < 0.1).all():
-                    print(f'Query video{i}_1 is from {video}')
+                    print(f'Query video{i}_1 is from {video} with frame {shot[1]-frame_old-1}')
