@@ -48,7 +48,10 @@ def export_json(file_dir, output_file):
     maps = defaultdict(dict)
 
     for audioname in os.listdir(file_dir):
+        if audioname == '.DS_Store':
+            continue
         filename = file_dir + "/" + audioname
+        print(filename)
         Fs, song = read(filename)
         song = np.transpose(np.transpose(song)[0])
         map = create_constellation(song, Fs)

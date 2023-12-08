@@ -4,14 +4,37 @@ import math
 import json
 import os
 import sys
+import webbrowser
+
+import librosa
+
 import numpy as np
 from scipy.fft import fft, fftfreq
 from scipy import fft, signal
 import scipy
 from scipy.io.wavfile import read
 
+def open_video_player(video, frame):
+    video = video[0:-3]
+    video += 'mp4'
+    full_url = f"https://liu-zy-98.github.io/vidplayer/?video=videos/{video}&start={frame}"
+    print(full_url)
+    # Open the default browser to the full URL
+    webbrowser.open(full_url)
 
+def find_offset(within_file, find_file, window):
+    y_within, sr_within = librosa.load(within_file, sr=4410)
+    y_find, _ = librosa.load(find_file, sr=sr_within)
 
+    c = signal.correlate(y_within, y_find[:sr_within*window], mode='valid', method='fft')
+    peak = np.argmax(c)
+    offset = round(peak / sr_within, 2)
+
+    # fig, ax = plt.subplots()
+    # ax.plot(c)
+    # fig.savefig("cross-correlation.png")
+
+    return offset * 30
 
 def get_residual_clip(audio1, audio2):
     if len(audio1) != len(audio2):
@@ -24,7 +47,7 @@ def get_residual_clip(audio1, audio2):
 
 def get_residual_total(input, full):
     n, m = len(input), len(full)
- 
+
     min_residual = math.inf
     min_index = 0
     for index in range(m - n + 1):
@@ -34,7 +57,7 @@ def get_residual_total(input, full):
             min_index = index
     return min_residual, min_index
 
-def print_match(input):
+def print_match(querypath, input):
     
     min_residual = math.inf
     match = None
@@ -49,6 +72,9 @@ def print_match(input):
     
 
     print(match, min_residual, min_index)
+    frame = find_offset('Data/Audio/Audios_DB/' + match, querypath, 5)
+    print('frame: ' + str(int(frame)))
+    open_video_player(match, frame)
 
 def create_constellation(audio, Fs):
     # Parameters
@@ -95,7 +121,7 @@ if __name__ == "__main__":
     song = np.transpose(np.transpose(song)[0])
     input = create_constellation(song, Fs)
 
-    print_match(input)
+    print_match(sys.argv[2], input)
 
 
     
