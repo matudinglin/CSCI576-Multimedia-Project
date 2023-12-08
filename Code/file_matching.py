@@ -57,7 +57,7 @@ def get_residual_total(input, full):
             min_index = index
     return min_residual, min_index
 
-def print_match(querypath, input):
+def print_match(querypath, input, db):
     
     min_residual = math.inf
     match = None
@@ -111,17 +111,7 @@ def create_constellation(audio, Fs):
             
     return constellation_map
 
-if __name__ == "__main__":
 
-
-    with open("Data/Audio/db.json", 'r') as file:
-        db = json.load(file)
-    
-    Fs, song = read(sys.argv[2])
-    song = np.transpose(np.transpose(song)[0])
-    input = create_constellation(song, Fs)
-
-    print_match(sys.argv[2], input)
 
 
     
